@@ -1,0 +1,10 @@
+# Discovery individual-level inputs must remain local.
+/data/release/discovery*
+/data/prepared/discovery*/
+/data/source/discovery*
+/data/source/population.RRBS.dat.cln.imp.counts.100bp.mr
+
+# Local outputs and uncompressed large model tables.
+/results/ewas/discovery_all.csv
+*.tar.gz
+*.partial
