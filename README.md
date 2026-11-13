@@ -1,6 +1,6 @@
 # BMI-CTS-MR
 
-EWAS analysis code for cell-type-specific associations between DNA methylation regions and body mass index.
+Code to identify immune cell type-specific DNA methylation regions asscociated with BMI.
 
 ## Files
 
