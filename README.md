@@ -5,10 +5,10 @@ Code to identify immune cell type-specific DNA methylation regions asscociated w
 ## Files
 
 - `code/ewas.R`: discovery and validation models, discovery BH correction within each cell type, and association tables.
-- `data/`: discovery cell proportions, plus validation methylation data for the 66 selected hg19 regions, phenotype, and cell proportions.
+- `data/`: discovery cell proportions, plus validation methylation data for the 66 selected regions, phenotype, and cell proportions.
 - `results/`: model results. The complete discovery statistics are supplied as `discovery_all.csv.gz`.
 
-Discovery cell proportions are included in `data/discovery_cell_proportions.csv`. The discovery phenotype and methylation matrix should be obtained from GEO using the link provided in the paper; these two files are not included in this repository.
+The discovery phenotype and methylation matrix should be obtained from GEO using the link provided in the paper; these two files are not included in this repository.
 
 ## Run the analysis
 
