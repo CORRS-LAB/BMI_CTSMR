@@ -1,18 +1,18 @@
 # Set the working directory to the project root before running this script.
-if (!dir.exists("data/release")) stop("Set the working directory to the project root containing data/release.")
-dir.create("results/ewas", recursive=TRUE, showWarnings=FALSE)
+if (!dir.exists("data")) stop("Set the working directory to the project root containing data.")
+dir.create("results", recursive=TRUE, showWarnings=FALSE)
 # ---- 1. Discovery BMI model ----
-discovery_inputs <- c("data/release/discovery_model_phenotype.csv",
-  "data/release/discovery_cell_proportions.csv",
-  "data/prepared/discovery_pre_QC/discovery.pre_QC.beta.tsv")
+discovery_inputs <- c("data/discovery_model_phenotype.csv",
+  "data/discovery_cell_proportions.csv",
+  "data/discovery.pre_QC.beta.tsv")
 if (!all(file.exists(discovery_inputs))) {
-  stop("Discovery input data are not distributed. Supply them locally to rerun EWAS.")
+  stop("Download the discovery phenotype and methylation matrix from GEO using the link in the paper, and place them in data/ as described in README.md.")
 }
-inp <- read.csv("data/release/discovery_model_phenotype.csv")
-prop.est <- read.csv("data/release/discovery_cell_proportions.csv",
+inp <- read.csv("data/discovery_model_phenotype.csv")
+prop.est <- read.csv("data/discovery_cell_proportions.csv",
                      check.names = FALSE)
 mr.out <- data.table::fread(
-  "data/prepared/discovery_pre_QC/discovery.pre_QC.beta.tsv",
+  "data/discovery.pre_QC.beta.tsv",
   check.names = FALSE)
 # Preserve the pre-exclusion cohort size used by the original zero-value QC.
 discovery_qc_reference_n <- nrow(inp)
@@ -72,13 +72,13 @@ out <- join(join(alpha.all[,c(1:16)], pv.all[,c(1:16)], by = c("chr", "start", "
 BMI.discovery.all <- out
 BMI.discovery.sig <- out[rowSums(out[,c(30:42)] < 0.05) >=1,]
 # ---- 2. Validation BMI model ----
-inp <- read.csv("data/release/validation_model_phenotype.csv")
-prop.est <- read.csv("data/release/validation_cell_proportions.csv",
+inp <- read.csv("data/validation_model_phenotype.csv")
+prop.est <- read.csv("data/validation_cell_proportions.csv",
                      check.names = FALSE)
 prop.est <- prop.est[match(inp$sample_id, prop.est$sample_id), ]
 cells <- names(prop.est)[-1]
 prop <- data.matrix(prop.est[, -1])
-mr.out <- data.table::fread("data/release/validation_beta.tsv",
+mr.out <- data.table::fread("data/validation_beta.tsv",
                             check.names = FALSE)
 dat <- as.data.frame(mr.out[, c("chr", "start", "end", inp$sample_id),
                             with = FALSE])
@@ -149,9 +149,9 @@ for(i in 1:ncol(alpha.vd.sig)){
     vd.reshape <- rbind(vd.reshape, vd.tmp)
 }
 out.dis.vd <- merge(out, vd.reshape, by = c("cell.type", "chr", "start", "end"))
-write.csv(out.dis.vd, "results/ewas/discovery_validation_associations.csv", row.names = F)
+write.csv(out.dis.vd, "results/discovery_validation_associations.csv", row.names = F)
 out.dis.vd.sub <- out.dis.vd[out.dis.vd$BMI.pv.validate < 0.05 & (out.dis.vd$BMI.alpha.validate * out.dis.vd$alpha>0),]
-write.csv(out.dis.vd.sub, "results/ewas/discovery_validation_replicated.csv", row.names = F)
-write.csv(BMI.discovery.all, "results/ewas/discovery_all.csv", row.names = FALSE)
-write.csv(BMI.discovery.sig, "results/ewas/discovery_significant.csv", row.names = FALSE)
-write.csv(BMI.validation.all, "results/ewas/validation_all.csv", row.names = FALSE)
+write.csv(out.dis.vd.sub, "results/discovery_validation_replicated.csv", row.names = F)
+write.csv(BMI.discovery.all, "results/discovery_all.csv", row.names = FALSE)
+write.csv(BMI.discovery.sig, "results/discovery_significant.csv", row.names = FALSE)
+write.csv(BMI.validation.all, "results/validation_all.csv", row.names = FALSE)
